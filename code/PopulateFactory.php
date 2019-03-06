@@ -96,6 +96,8 @@ class PopulateFactory extends FixtureFactory {
                 $data['ParentID'] = $f['File']->ParentID;
             }
 
+	    $file->publishRecursive();
+
 		}
 
 		// if any merge labels are defined then we should create the object
@@ -168,10 +170,13 @@ class PopulateFactory extends FixtureFactory {
 			$obj->flushCache();
 		}
 		else {
-			$obj = parent::createObject($class, $identifier, $data);
+            		$obj = null;
+            		if ($class != File::class) {
+                		$obj = parent::createObject($class, $identifier, $data);
+            		}
 		}
 
-		if($obj->hasExtension(Versioned::class)) {
+		if($obj && $obj->hasExtension(Versioned::class)) {
 			foreach($obj->getVersionedStages() as $stage) {
 				if($stage !== Versioned::DRAFT) {
 
